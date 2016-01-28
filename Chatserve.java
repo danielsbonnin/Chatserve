@@ -11,7 +11,7 @@ public class Chatserve {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		System.out.println("Hello World");
+		System.out.println("chatserver has started.");
 		/* Code help obtained from docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html */
 		try ( 
 			    ServerSocket serverSocket = new ServerSocket(4444);
