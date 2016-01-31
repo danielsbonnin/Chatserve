@@ -42,7 +42,7 @@ public class Chatserve {
 		
 		/* Code help obtained from docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html */
 		try (
-			    ServerSocket serverSocket = new ServerSocket(4444);
+			    ServerSocket serverSocket = new ServerSocket(portno);
 			    Socket clientSocket = serverSocket.accept();
 			    PrintWriter out =
 			        new PrintWriter(clientSocket.getOutputStream(), true);
