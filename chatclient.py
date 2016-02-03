@@ -2,8 +2,6 @@ import socket
 import argparse
 import re
 
-
-
 MSG_BYTE_SIZE = 50
 MSG_END = "<END>"
 

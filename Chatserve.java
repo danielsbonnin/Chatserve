@@ -10,11 +10,29 @@ import java.io.*;
 public class Chatserve {
 	public static String Usage = "Usage: $java Chatserve <Port Number>\n";
 	public static int portno;
-
+	public static String processInput(String data, Socket clientSocket) {
+		String clientName = data.substring(0, 10);
+		String msg = data.substring(10);
+		
+		return clientName.replace("_", "") + ">" + msg;
+	}
+	
+	public static String prepareOutput(String handle, BufferedReader consoleInput) {
+		String input = "";
+		System.out.println(handle + "> ");
+		
+		try {
+			input = consoleInput.readLine();
+		} catch (IOException e){
+			System.err.println("Invalid input");
+		}
+		return handle + input + "<END>";
+	}
+	
+	private static String handle;
 	public static void main(String[] args) {
 		
-		// TODO Auto-generated method stub
-		System.out.println("chatserver has started.");
+		
 		if (args.length > 1) {
 			System.err.println("Only 1 argument permitted\n" + Usage);
 			System.exit(1);
@@ -35,11 +53,18 @@ public class Chatserve {
 				System.exit(1);
 			}
 		}
-		
-		System.out.println("The port number you entered was " + Integer.toString(portno));
-				
-		
-		
+		System.out.println("Welcome to chatserver on port " + 
+				Integer.toString(portno) +
+				"Please enter a handle: ");
+		/* Help with terminal input athspk's answer on the following page:
+		 * http://stackoverflow.com/questions/4644415/java-how-to-get-input-from-system-console
+		 */
+		BufferedReader consoleInput =  new BufferedReader(new InputStreamReader(System.in));
+		try {
+			handle = consoleInput.readLine();
+		} catch(IOException e) {
+			System.err.println("Invalid handle input");
+		}
 		/* Code help obtained from docs.oracle.com/javase/tutorial/networking/sockets/clientServer.html */
 		try (
 			    ServerSocket serverSocket = new ServerSocket(portno);
@@ -49,15 +74,23 @@ public class Chatserve {
 			    BufferedReader in = new BufferedReader(
 			        new InputStreamReader(clientSocket.getInputStream()));
 			) {
-		    String inputLine, outputLine;
-            
-		    // Initiate conversation with client
-		    outputLine = "Hello, client";
-		    out.println(outputLine);
+			System.out.println("A client has connected");
+			out.println(handle + "I am the server so watch yourself");
+		    String inputLine;
+            while (true) {
+            	inputLine = "";
+            	while ((inputLine += in.readLine()) != null){}
+            	System.out.println(processInput(inputLine, clientSocket));
+            	String output = prepareOutput(handle, consoleInput);
+            	if (output.contains("/quit")) {
+            		System.out.println("Conversation with " + handle + " in disconnected");
+            		clientSocket.close();
+            		
+            	} else {
+            		out.print(prepareOutput(handle, consoleInput));
+            	}
+            }
 
-		    while ((inputLine = in.readLine()) != null) {
-		        out.println(outputLine);
-		    }
 		} catch (IOException ie) {
 			ie.printStackTrace();
 		}
