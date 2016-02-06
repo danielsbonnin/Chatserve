@@ -3,7 +3,7 @@ import argparse
 import re
 
 MSG_BYTE_SIZE = 50
-MSG_END = "<END>"
+MSG_END = '<END>'
 
 def main():
     args = cliHandler()
@@ -16,10 +16,14 @@ def main():
 
     #Create tcp connection with server
     s = initContact(args)
-
+    print(processInput(s.recv(1024), s))
     while 1:
-        s.send(prepareOutput(s, handle))
-        print(processInput(s.recv(), s))
+        print("about to send message")
+        bytes = s.sendall(prepareOutput(s, handle))
+        if (bytes == 0):
+            print("send is broken")
+        print("about to process input")
+        print(processInput(s.recv(1024), s))
         
     exit(1)
     
@@ -64,23 +68,28 @@ def initContact(args):
 
 def encodeMSG(msg):
     spaces = MSG_BYTE_SIZE - len(msg)
-    return msg.append('_' * spaces)
+    msg += '_' * spaces
+    return msg.encode('utf-8')
     
-def processInput(data, s):              
+def processInput(data, s):
+    print("inside process input()")
+    data = data.decode('utf-8')
+    print("raw data: " + data)
     servername = data[:10]
     msg = data[10:data.find(MSG_END)]
-    if (msg.find('/quit')):
+    if ("/quit" in msg):
         s.close()
         return(servername + ' has quit the conversation')
     return(servername.replace('_', '') + "> " + msg);
 
 def prepareOutput(s, handle):
     uinput = input(handle.replace('_', '') + '> ')
-    if (uinput.find('/quit')):
+    if (uinput.find('/quit') != -1):
         s.close()
         exit(1)
     else:
-        return encodeMSG(handle + uinput + MSG_END)
+        print("sending: " + encodeMSG(handle + uinput + MSG_END).decode())
+        return encodeMSG(handle + uinput + MSG_END + "\n")
 
     
 if __name__ == "__main__":

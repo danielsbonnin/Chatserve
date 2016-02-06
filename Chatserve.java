@@ -13,7 +13,6 @@ public class Chatserve {
 	public static String processInput(String data, Socket clientSocket) {
 		String clientName = data.substring(0, 10);
 		String msg = data.substring(10);
-		
 		return clientName.replace("_", "") + ">" + msg;
 	}
 	
@@ -75,19 +74,19 @@ public class Chatserve {
 			        new InputStreamReader(clientSocket.getInputStream()));
 			) {
 			System.out.println("A client has connected");
-			out.println(handle + "I am the server so watch yourself");
-		    String inputLine;
+			out.println("Server____I am the server so watch yourself<END>");
+		    String inputLine = "";
             while (true) {
-            	inputLine = "";
-            	while ((inputLine += in.readLine()) != null){}
-            	System.out.println(processInput(inputLine, clientSocket));
-            	String output = prepareOutput(handle, consoleInput);
-            	if (output.contains("/quit")) {
-            		System.out.println("Conversation with " + handle + " in disconnected");
-            		clientSocket.close();
-            		
-            	} else {
-            		out.print(prepareOutput(handle, consoleInput));
+            	if ((inputLine = in.readLine()) != null) { 
+	            	System.out.println(processInput(inputLine, clientSocket));
+	            	String output = prepareOutput(handle, consoleInput);
+	            	if (output.contains("/quit")) {
+	            		System.out.println("Conversation with " + handle + " is disconnected");
+	            		clientSocket.close();
+	            		
+	            	} else {
+	            		out.println(output);
+	            	}
             	}
             }
 
