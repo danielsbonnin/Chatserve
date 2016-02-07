@@ -2,11 +2,25 @@ import socket
 import argparse
 import re
 import errno
+import signal
 
 MSG_BYTE_SIZE = 50
 MSG_END = '<END>'
 
+def exitCleanly():
+    print("handler")
+    try:
+        print("bye")
+        s.close()
+    except Exception as e:
+        print("bye")
+        exit(1)
+
+
+
 def main():
+    signal.signal(signal.SIGTERM, exitCleanly)
+    signal.signal(signal.SIGINT, exitCleanly)
     args = cliHandler()
 
     print("You are requesting access to the chat server at : " + args.hostname + ':' +
@@ -16,14 +30,21 @@ def main():
     handle = getHandle()
 
     #Create tcp connection with server
-    s = initContact(args)
+    #Creat a tcp socket
+    s = socket.socket(
+        socket.AF_INET, socket.SOCK_STREAM)
+
+    initContact(args, s)
+    
+
+
     processInput(s)
     while 1:
         prepareOutput(s, handle)
         processInput(s)
         
     exit(1)
-    
+
 def cliHandler():
     #Help obtained from python docs at
     #docs.python.org/3/library/argparse.html
@@ -45,10 +66,7 @@ def getHandle():
         name += '_' * pad
     return name
 
-def initContact(args):
-    #create an INET, STREAMing socket
-    s = socket.socket(
-        socket.AF_INET, socket.SOCK_STREAM)
+def initContact(args, s):
 
     #This error handling code heavily influenced by the accepted answer here:
     #stackoverflow.com/questions/177389/testing-socket-connection-in-python
@@ -61,7 +79,6 @@ def initContact(args):
         #print(e)
         s.close()
         exit(1)
-    return s
 
 def encodeMSG(msg):
     #spaces = MSG_BYTE_SIZE - len(msg)
