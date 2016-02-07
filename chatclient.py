@@ -1,6 +1,7 @@
 import socket
 import argparse
 import re
+import errno
 
 MSG_BYTE_SIZE = 50
 MSG_END = '<END>'
@@ -16,14 +17,10 @@ def main():
 
     #Create tcp connection with server
     s = initContact(args)
-    print(processInput(s.recv(1024), s))
+    processInput(s)
     while 1:
-        print("about to send message")
-        bytes = s.sendall(prepareOutput(s, handle))
-        if (bytes == 0):
-            print("send is broken")
-        print("about to process input")
-        print(processInput(s.recv(1024), s))
+        prepareOutput(s, handle)
+        processInput(s)
         
     exit(1)
     
@@ -67,30 +64,42 @@ def initContact(args):
     return s
 
 def encodeMSG(msg):
-    spaces = MSG_BYTE_SIZE - len(msg)
-    msg += '_' * spaces
+    #spaces = MSG_BYTE_SIZE - len(msg)
+    #msg += '_' * spaces
     return msg.encode('utf-8')
     
-def processInput(data, s):
-    print("inside process input()")
+def processInput(s):
+    try:
+        data = s.recv(1024)
+    except socket.error as e:
+        if (e.errno == errno.ECONNRESET or
+            e.errno == errno.ECONNABORTED):
+            print("server disconnected")
+            s.close()
+            exit(1)
+      
     data = data.decode('utf-8')
-    print("raw data: " + data)
+    if len(data) < 10:
+        print("server disconnected")
+        s.close()
+        exit(1)
     servername = data[:10]
     msg = data[10:data.find(MSG_END)]
-    if ("/quit" in msg):
-        s.close()
-        return(servername + ' has quit the conversation')
-    return(servername.replace('_', '') + "> " + msg);
+    print(servername.replace('_', '') + "> " + msg);
 
 def prepareOutput(s, handle):
     uinput = input(handle.replace('_', '') + '> ')
-    if (uinput.find('/quit') != -1):
+    if (uinput.find('\quit') != -1):
         s.close()
         exit(1)
     else:
-        print("sending: " + encodeMSG(handle + uinput + MSG_END).decode())
-        return encodeMSG(handle + uinput + MSG_END + "\n")
-
+        try:
+            s.sendall(encodeMSG(handle + uinput + MSG_END + "\n"))
+        except socket.error as e:
+            if (e.errno == errno.ECONNRESET or e.errno == errno.ECONNABORTED):
+                print("server disconnected")
+                s.close()
+                exit(1)
     
 if __name__ == "__main__":
     main()
