@@ -21,21 +21,6 @@ import java.io.*;
 
 
 public class Chatserve {
-	
-	/**
-	 * Info and code samples about shutdown hooks Source: 
-	 * http://hellotojavaworld.blogspot.com/2010/11/runtimeaddshutdownhook.html
-	 * 
-	 */
-	public static void attachHook(){
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			@Override
-			public void run() {	
-				System.err.println("bye");
-				System.exit(1);
-			}
-		});
-	}
  
 	public static String Usage = "Usage: $java Chatserve <Port Number>\n";
 	public static int portno;
@@ -90,7 +75,6 @@ public class Chatserve {
 	private static String clientHandle = "";
 	
 	public static void main(String[] args) {
-		attachHook();
 		if (args.length > 1) {
 			System.err.println("Only 1 argument permitted\n" + Usage);
 			System.exit(1);
