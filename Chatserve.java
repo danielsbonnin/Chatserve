@@ -36,6 +36,7 @@ public class Chatserve {
 			public void run() {
 				closeClient(out, in, clientSocket, serverSocket);	
 				System.err.println("bye");
+				System.exit(1);
 			}
 		});
 	}
@@ -85,8 +86,9 @@ public class Chatserve {
 			out.close();
 			in.close();
 			clientSocket.close();
+			serverSocket.close();
 		}
-		catch (IOException ie) {
+		catch (Exception e) {
 			System.out.println("There was an error disconnecting from " + clientHandle);
 			System.exit(1);
 		}
