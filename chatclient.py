@@ -24,6 +24,7 @@ def main():
     s = socket.socket(
         socket.AF_INET, socket.SOCK_STREAM)
 
+
     initContact(args, s)
 
     processInput(s)
