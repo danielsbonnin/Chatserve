@@ -26,15 +26,10 @@ public class Chatserve {
 	 * http://hellotojavaworld.blogspot.com/2010/11/runtimeaddshutdownhook.html
 	 * 
 	 */
-	public static void attachHook(
-			final ServerSocket serverSocket, 
-			final Socket clientSocket, 
-			final BufferedReader in, 
-			final PrintWriter out){
+	public static void attachHook(){
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
-			public void run() {
-				closeClient(out, in, clientSocket, serverSocket);	
+			public void run() {	
 				System.err.println("bye");
 				System.exit(1);
 			}
