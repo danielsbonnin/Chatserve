@@ -1,4 +1,5 @@
-#!/usr/bin/env python .
+#!/usr/bin/env python
+#^
 
 """chatclient.py: A simple chat client for class
 
