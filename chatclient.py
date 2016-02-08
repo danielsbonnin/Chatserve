@@ -54,7 +54,7 @@ def cliHandler():
     return parser.parse_args()
 
 def getHandle():
-    name = input("Enter a handle: ")
+    name = raw_input("Enter a handle: ")
     #ensure handle is 10 characters long
     if (len(name) > 10):
         name = name[:10]
@@ -86,9 +86,6 @@ def encodeMSG(msg):
 def processInput(s):
     try:
         data = s.recv(1024)
-    except KeyboardInterrupt:
-        s.shutdown()
-        s.close()
     except socket.error as e:
         if (e.errno == errno.ECONNRESET or
             e.errno == errno.ECONNABORTED):
@@ -110,7 +107,7 @@ def processInput(s):
 
 def prepareOutput(s, handle):
     try:
-        uinput = input(handle.replace('_', '') + '> ')
+        uinput = raw_input(handle.replace('_', '') + '> ')
     except:
         s.close()
         exit(1)
