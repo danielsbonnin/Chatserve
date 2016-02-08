@@ -15,7 +15,7 @@
  * 
  * 			Chatserve exits gracefully upon SIGINT or SIGKILL. 
  */
-package project1;
+
 import java.net.*;
 import java.io.*;
 
@@ -156,7 +156,7 @@ public class Chatserve {
 			System.out.println("A client has connected. Awaiting initial message. . .");
 			out.println(handle + "***You are now connected***<END>");
 
-			attachHook(serverSocket, clientSocket, in, out);
+			attachHook();
 
 
             while (true) {
