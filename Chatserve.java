@@ -79,10 +79,7 @@ public class Chatserve {
 	}
 	public static void closeClient(PrintWriter out, BufferedReader in, Socket clientSocket, ServerSocket serverSocket) {
 		try {
-			out.close();
-			in.close();
 			clientSocket.close();
-			serverSocket.close();
 		}
 		catch (Exception e) {
 			System.out.println("There was an error disconnecting from " + clientHandle);
