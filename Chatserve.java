@@ -81,8 +81,6 @@ public class Chatserve {
 		try {
 			out.close();
 			in.close();
-			clientSocket.shutdownInput();
-			clientSocket.shutdownOutput();
 			clientSocket.close();
 			serverSocket.close();
 		}
