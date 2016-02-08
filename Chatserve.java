@@ -27,10 +27,10 @@ public class Chatserve {
 	 * 
 	 */
 	public static void attachHook(
-			ServerSocket serverSocket, 
-			Socket clientSocket, 
-			BufferedReader in, 
-			PrintWriter out){
+			final ServerSocket serverSocket, 
+			final Socket clientSocket, 
+			final BufferedReader in, 
+			final PrintWriter out){
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			@Override
 			public void run() {

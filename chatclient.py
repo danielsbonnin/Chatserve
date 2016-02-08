@@ -7,16 +7,6 @@ import signal
 MSG_BYTE_SIZE = 50
 MSG_END = '<END>'
 
-def exitCleanly():
-    print("handler")
-    try:
-        print("bye")
-        s.close()
-    except Exception as e:
-        print("bye")
-        exit(1)
-
-
 
 def main():
     signal.signal(signal.SIGTERM, exitCleanly)
@@ -35,8 +25,6 @@ def main():
         socket.AF_INET, socket.SOCK_STREAM)
 
     initContact(args, s)
-    
-
 
     processInput(s)
     while 1:
@@ -44,6 +32,16 @@ def main():
         processInput(s)
         
     exit(1)
+
+def exitCleanly(signum, frame):
+    try:
+        print("bye")
+        s.shutdown()
+        s.close()
+    except Exception as e:
+        exit(1)
+
+
 
 def cliHandler():
     #Help obtained from python docs at
@@ -88,10 +86,16 @@ def encodeMSG(msg):
 def processInput(s):
     try:
         data = s.recv(1024)
+    except KeyboardInterrupt:
+        s.shutdown()
+        s.close()
     except socket.error as e:
         if (e.errno == errno.ECONNRESET or
             e.errno == errno.ECONNABORTED):
             print("server disconnected")
+            s.close()
+            exit(1)
+        else:
             s.close()
             exit(1)
       
@@ -105,7 +109,11 @@ def processInput(s):
     print(servername.replace('_', '') + "> " + msg);
 
 def prepareOutput(s, handle):
-    uinput = input(handle.replace('_', '') + '> ')
+    try:
+        uinput = input(handle.replace('_', '') + '> ')
+    except:
+        s.close()
+        exit(1)
     if (uinput.find('\quit') != -1):
         s.close()
         exit(1)
@@ -115,6 +123,9 @@ def prepareOutput(s, handle):
         except socket.error as e:
             if (e.errno == errno.ECONNRESET or e.errno == errno.ECONNABORTED):
                 print("server disconnected")
+                s.close()
+                exit(1)
+            else:
                 s.close()
                 exit(1)
     
