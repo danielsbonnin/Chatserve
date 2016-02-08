@@ -1,12 +1,28 @@
+#!/usr/bin/env python .
+
+"""chatclient.py: A simple chat client for class
+
+This module connects to the Chatserve server and enables text based chat
+ofer over a tcp connection.
+
+Example:
+    $python chatclient.py flip1.engr.oregonstate.edu 4444
+
+"""
+
+__author__ = "Daniel Bonnin"
+__email__ = "bonnind@oregonstate.edu"
+
+
 import socket
 import argparse
 import re
 import errno
 import signal
 
-MSG_BYTE_SIZE = 50
 MSG_END = '<END>'
-
+"""String: The delimiter to mark end of messages
+"""
 
 def main():
     signal.signal(signal.SIGTERM, exitCleanly)
@@ -16,35 +32,40 @@ def main():
     print("You are requesting access to the chat server at : " + args.hostname + ':' +
           str(args.port))
 
-    #get user handle
+    
     handle = getHandle()
 
-    #Create tcp connection with server
-    #Creat a tcp socket
+    """Create a tcp socket. """
     s = socket.socket(
         socket.AF_INET, socket.SOCK_STREAM)
 
-
+    """Verify Server address and contact server"""
     initContact(args, s)
 
+    """Get server response"""
     processInput(s)
+
+    """Conversation loop"""
     while 1:
+        """Get cli input and send to server"""
         prepareOutput(s, handle)
+
+        """Process server response and print to terminal"""
         processInput(s)
         
-    exit(1)
-
+                        
 def exitCleanly(signum, frame):
+    """Handles SIGINT and SIGTERM"""
+    
     try:
         print("bye")
         s.shutdown()
         s.close()
-    except Exception as e:
+    except:
         exit(1)
 
-
-
 def cliHandler():
+    """"""
     #Help obtained from python docs at
     #docs.python.org/3/library/argparse.html
     parser = argparse.ArgumentParser(description='Handle user port input')

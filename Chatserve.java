@@ -90,6 +90,7 @@ public class Chatserve {
 	private static String clientHandle = "";
 	
 	public static void main(String[] args) {
+		attachHook();
 		if (args.length > 1) {
 			System.err.println("Only 1 argument permitted\n" + Usage);
 			System.exit(1);
@@ -152,7 +153,7 @@ public class Chatserve {
 			System.out.println("A client has connected. Awaiting initial message. . .");
 			out.println(handle + "***You are now connected***<END>");
 
-			attachHook();
+			
 
 
             while (true) {
